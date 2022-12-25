@@ -14,6 +14,8 @@ uint8_t buffer [ MAX_BUFFER_SIZE ];
 uint8_t index_buffer = 0;
 uint8_t buffer_flag = 0;
 
+extern UART_HandleTypeDef huart2;
+
 
 void HAL_UART_RxCpltCallback ( UART_HandleTypeDef * huart ) {
 	if( huart->Instance == USART2 ) {
