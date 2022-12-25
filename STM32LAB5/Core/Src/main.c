@@ -64,11 +64,19 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 
 
+# define MAX_BUFFER_SIZE 30
 uint8_t temp = 0;
-void HAL_UART_RxCpltCallback ( UART_HandleTypeDef * huart ){
-	if (huart->Instance == USART2){
-		HAL_UART_Transmit(&huart2, &temp,1,50);
-		HAL_UART_Receive_IT(&huart2,&temp,1);
+uint8_t buffer [ MAX_BUFFER_SIZE ];
+uint8_t index_buffer = 0;
+uint8_t buffer_flag = 0;
+
+
+void HAL_UART_RxCpltCallback ( UART_HandleTypeDef * huart ) {
+	if( huart->Instance == USART2 ) {
+		HAL_UART_Receive_IT (& huart2 , & temp , 1) ;
+		buffer [index_buffer++] = temp ;
+		if( index_buffer == 30) index_buffer = 0;
+		buffer_flag = 1;
 	}
 }
 
@@ -113,7 +121,8 @@ int main(void)
   HAL_ADC_Start(&hadc1);
   HAL_TIM_Base_Start_IT (&htim2) ;
   HAL_UART_Receive_IT (&huart2 , &temp , 1) ;
-  HAL_ADC_Start_IT(&hadc1);
+  HAL_ADC_PollForConversion(&hadc1, 100); // poll for conversion
+  //HAL_ADC_Start_IT(&hadc1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -126,13 +135,13 @@ int main(void)
   while (1)
   {
 
-
+	  /*
 	  if( buffer_flag == 1) {
 		  command_parser_fsm() ;
 		  buffer_flag = 0;
 	  }
 	  uart_communiation_fsm () ;
-
+*/
 
 	  ADC_value = HAL_ADC_GetValue(&hadc1);
 
